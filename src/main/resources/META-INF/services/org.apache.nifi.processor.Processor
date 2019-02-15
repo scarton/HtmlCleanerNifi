@@ -1,3 +1,1 @@
-com.smartlogic.nificlassifier.SemaphoreClassifier
-com.smartlogic.nificlassifier.CSVToAttributes
-com.smartlogic.nificlassifier.HtmlCleaner
+net.c4analytics.htmlcleaner.HtmlToXhtml

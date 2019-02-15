@@ -20,7 +20,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.c4analytics.htmlcleaner.utils.CSProps;
+import net.c4analytics.htmlcleaner.utils.CLProps;
 import net.c4analytics.htmlcleaner.utils.XmlValidator;
 
 /**
@@ -50,12 +50,10 @@ public class CleanerTest {
 	 */
 	@Test
 	public void testClassifyBodyContent() throws IOException, URISyntaxException {
-	    TestRunner runner = TestRunners.newTestRunner(new HtmlCleaner());
+	    TestRunner runner = TestRunners.newTestRunner(new HtmlToXhtml());
 	    
 	    // Add properties
-	    runner.setProperty(CSProps.CLASSIFIER_URL, props.getProperty("cs.onprem.url"));
-	    runner.setProperty(CSProps.CLASSIFIER_OUTPUT_FORMAT, props.getProperty("cs.output.format"));
-	    runner.setProperty(CSProps.SOURCE_BODY_MAPPING, "BODY");
+	    runner.setProperty(CLProps.ADVANCED_XML_ESCAPE, props.getProperty("cs.onprem.url"));
 	    
 	    // set Attributes
 	    Map<String,String> attributes = new HashMap<>();
@@ -64,10 +62,8 @@ public class CleanerTest {
 	    runner.enqueue(new byte[0],attributes);
 	    runner.run();
 	    runner.assertQueueEmpty();
-	    List<MockFlowFile> results = runner.getFlowFilesForRelationship(HtmlCleaner.SUCCESS);
+	    List<MockFlowFile> results = runner.getFlowFilesForRelationship(HtmlToXhtml.SUCCESS);
 	    assertTrue("1 match", results.size() == 1);
-	    List<MockFlowFile> orig = runner.getFlowFilesForRelationship(HtmlCleaner.ORIGINAL);
-	    assertTrue("2 match", orig.size() == 1);
 	    MockFlowFile result = results.get(0);
 	    // Test attributes and content
 //	    result.assertAttributeEquals("CS_ERROR", "nada");
