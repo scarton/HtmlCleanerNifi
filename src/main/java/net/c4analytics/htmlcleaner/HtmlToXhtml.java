@@ -91,7 +91,7 @@ public class HtmlToXhtml extends AbstractProcessor {
 	        });
 	        HtmlCleaner cleaner = new HtmlCleaner();
 	        CleanerProperties props = cleaner.getProperties();
-//	        props.setXXX(...);
+	        nprops.setCleanerProps(props);
 	         
 	        TagNode node = cleaner.clean(new ByteArrayInputStream(ac.get()));
 	         

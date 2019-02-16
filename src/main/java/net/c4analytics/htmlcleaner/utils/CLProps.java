@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.nifi.components.PropertyDescriptor;
 import org.apache.nifi.processor.ProcessContext;
 import org.apache.nifi.processor.util.StandardValidators;
+import org.htmlcleaner.CleanerProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,4 +86,12 @@ public class CLProps {
             .required(true)
             .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
             .build();
+
+	/**
+	 * copy NiFi properties to HTMLCleaner properties object.
+	 * @param props
+	 */
+	public void setCleanerProps(CleanerProperties props) {
+        props.setAdvancedXmlEscape(advancedXmlEscape);
+	}
 }
