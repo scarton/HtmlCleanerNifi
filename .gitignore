@@ -10,7 +10,7 @@
 *.log
 *.pid
 *.war
-*.nar
+
 bin/classes
 bin
 
