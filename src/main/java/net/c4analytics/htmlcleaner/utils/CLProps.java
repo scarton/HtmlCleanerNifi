@@ -8,6 +8,7 @@ import org.apache.nifi.components.PropertyDescriptor;
 import org.apache.nifi.processor.ProcessContext;
 import org.apache.nifi.processor.util.StandardValidators;
 import org.htmlcleaner.CleanerProperties;
+import org.htmlcleaner.OptionalOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,25 +16,76 @@ import org.slf4j.LoggerFactory;
  * Handle setup and parsing of properties from the Nifi processor configuration.
  * @author Steve Carton (steve.carton@smartlogic.com)
  *
- * Dec 18, 2018
+ * Feb 18, 2019
+ * 
+ * Default settings:
+ * 
+ * advancedXmlEscape = true; 
+ * useCdataForScriptAndStyle = true; 
+ * translateSpecialEntities = true; 
+ * recognizeUnicodeChars = true; 
+ * omitUnknownTags = false; 
+ * treatUnknownTagsAsContent = false; 
+ * omitDeprecatedTags = false; 
+ * treatDeprecatedTagsAsContent = false; 
+ * omitComments = false; 
+ * omitXmlDeclaration = OptionalOutput.alwaysOutput; 
+ * omitDoctypeDeclaration = OptionalOutput.alwaysOutput; 
+ * omitHtmlEnvelope = OptionalOutput.alwaysOutput; 
+ * useEmptyElementTags = true; 
+ * allowMultiWordAttributes = true; 
+ * allowHtmlInsideAttributes = false; 
+ * ignoreQuestAndExclam = true; 
+ * namespacesAware = true; 
+ * keepHeadWhitespace = true; 
+ * addNewlineToHeadAndBody = true; 
+ * hyphenReplacementInComment = "="; 
+ * pruneTags = null; 
+ * allowTags = null; 
+ * booleanAttributeValues = BOOL_ATT_SELF; 
+ * collapseNullHtml = CollapseHtml.none
+ * charset = "UTF-8";
+ * 
  */
 public class CLProps {
 	final static Logger logger = LoggerFactory.getLogger(CLProps.class);
 
-	public boolean advancedXmlEscape = true;
+	public boolean advancedXmlEscape = true;                              
+	public boolean useCdataForScriptAndStyle = true;                      
+	public boolean translateSpecialEntities = true;                       
+	public boolean recognizeUnicodeChars = true;                          
+	public boolean omitUnknownTags = false;                               
+	public boolean treatUnknownTagsAsContent = false;                     
+	public boolean omitDeprecatedTags = false;                            
+	public boolean treatDeprecatedTagsAsContent = false;                  
+	public boolean omitComments = false;                                  
+	public OptionalOutput omitXmlDeclaration = OptionalOutput.alwaysOutput;      
+	public OptionalOutput omitDoctypeDeclaration = OptionalOutput.alwaysOutput;  
+	public OptionalOutput omitHtmlEnvelope = OptionalOutput.alwaysOutput;        
+	public boolean useEmptyElementTags = true;                            
+	public boolean allowMultiWordAttributes = true;                       
+	public boolean allowHtmlInsideAttributes = false;                     
+	public boolean ignoreQuestAndExclam = true;                           
+	public boolean namespacesAware = true;                                
+	public boolean keepHeadWhitespace = true;                             
+	public boolean addNewlineToHeadAndBody = true;                        
+	public String hyphenReplacementInComment = "=";                      
+	public String pruneTags = null;                                      
+	public String allowTags = null;                                      
+	public boolean booleanAttributeValues = true;                
+	public String charset = "UTF-8";                                     
 	
-	// Advanced Properties, parsed from a single processor property: Advanced Properties
-	public int connectionTimeout;
-
 	/* 
 	 * Stylized String of Processor Properties
 	 */
 	public String toString() {
 		StringBuilder sb = new StringBuilder("HTML Cleaner Processor Properties at Runtime:");
-		sb.append("\n  Classifier URL: "+advancedXmlEscape);
-		sb.append("\n  Connection Timeout: "+connectionTimeout);
+		sb.append("\n  "+ADVANCED_XML_ESCAPE.getName()+": "+advancedXmlEscape);
 		
 		return sb.toString();
+	}
+	private static boolean getBoolProp(ProcessContext context, PropertyDescriptor prop) {
+		return context.getProperty(prop).getValue()==null?null:Boolean.parseBoolean(context.getProperty(prop).getValue());
 	}
     /**
      * Set up the properties object with values from the configuration of the Processor. Parses the advanced attributes (semi-colon-delimited string of values) 
@@ -42,19 +94,8 @@ public class CLProps {
      */
     public static CLProps parseProps(ProcessContext context) {
     	CLProps props = new CLProps();
-    	props.advancedXmlEscape=context.getProperty(ADVANCED_XML_ESCAPE).getValue()==null?null:Boolean.parseBoolean(context.getProperty(ADVANCED_XML_ESCAPE).getValue());
+    	props.advancedXmlEscape=getBoolProp(context, ADVANCED_XML_ESCAPE);
 
-    	String[] pairs = context.getProperty(ADVANCED_PROPERTIES).getValue().replaceAll("\\s", "").split(";");
-    	for (String pair : pairs) {
-    		String[] tk = pair.replace(";","").split("=");
-    		switch (tk[0]) {
-			case "connection.timeout":
-				props.connectionTimeout=Integer.parseInt(tk[1]);
-				break;
-			default:
-				break;
-			}
-    	}
     	return props;
     }
 	/**
@@ -64,28 +105,16 @@ public class CLProps {
 	public static List<PropertyDescriptor> setProperties() {
         List<PropertyDescriptor> properties = new ArrayList<>();
         properties.add(CLProps.ADVANCED_XML_ESCAPE);
-        properties.add(CLProps.ADVANCED_PROPERTIES);
         return Collections.unmodifiableList(properties);
-
 	}
 	public static final PropertyDescriptor ADVANCED_XML_ESCAPE = new PropertyDescriptor.Builder()
-            .name("Classifier URL")
-            .description("Full URL to the  Semaphore classification Server.")
+            .name("Advanced XML Escape")
+            .description("If this parameter is set to true, ampersand sign (&) that proceeds valid XML character sequences (&XXX;) will not be escaped with &amp;XXX;")
             .required(true)
-            .defaultValue("http://localhost:5059/cat/index.html")
+            .defaultValue("true")
             .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
             .build();
     
-    public static final PropertyDescriptor ADVANCED_PROPERTIES = new PropertyDescriptor.Builder()
-            .name("Classifier Advanced Properties")
-            .description("Advanced properties for Semaphore Classification Server. ")
-            .defaultValue(
-            		"connection.timeout=1000000; \n"
-            		+ "id.result.attribute=semaphoreid;"
-            		)
-            .required(true)
-            .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
-            .build();
 
 	/**
 	 * copy NiFi properties to HTMLCleaner properties object.

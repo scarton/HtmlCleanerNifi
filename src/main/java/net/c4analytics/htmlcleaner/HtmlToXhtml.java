@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -63,8 +62,7 @@ public class HtmlToXhtml extends AbstractProcessor {
     
     @Override
     public void init(final ProcessorInitializationContext context){
-        List<PropertyDescriptor> properties = new ArrayList<>();
-        this.properties = Collections.unmodifiableList(properties);
+        this.properties = CLProps.setProperties();
         Set<Relationship> relationships = new HashSet<>();
         relationships.add(SUCCESS);
         relationships.add(FAILURE);

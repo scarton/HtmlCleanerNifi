@@ -1,6 +1,4 @@
-cs.onprem.url=http://build-reference:5058
-cs.output.format=xml
-content.file=data/sample.pdf
+content.file=data/sample.html
 content.title=NGL Crude Logistics, LLC Clean Air Act Settlement
 content.body=The Complaint alleges that NYCHA for years has violated and continues to violate basic federal health and safety regulations, including regulations requiring NYCHA to protect children from lead paint and otherwise to provide decent, safe, and sanitary housing.  The Complaint further alleges that NYCHA has repeatedly made false statements to HUD and the public regarding its lead paint compliance, and has intentionally deceived HUD inspectors.
 content.url=https://www.epa.gov/enforcement/ngl-crude-logistics-llc-clean-air-act-settlement
